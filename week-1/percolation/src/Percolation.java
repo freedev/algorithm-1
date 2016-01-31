@@ -18,36 +18,68 @@ public class Percolation {
 	private int sizeOpenedCells;
 	private boolean perculatesStatus = false;
 	
+	/**
+	 * 
+	 * @param N
+	 */
 	public Percolation(int N) {
 		if (N < 1) {
 			throw new IllegalArgumentException();
 		}
 		size = N;
 		map = new int[N*N];
+		// stack - optimization for first row
 		firstRow = new int[N];
+		// stack - optimization for last row
 		lastRow = new int[N];
+		// stack - list of open cells 
 		openedCell = new int[N*N];
+		// Weighted union-find data type
 		mapUnion = new WeightedQuickUnionUF(N*N);
 	}
 	
+	/**
+	 * helper method - translate row and column into position
+	 * @param i - row 
+	 * @param j - column
+	 * @return
+	 */
 	private int getPos(int i, int j) {
 		return (--i*size+--j);
 	}
 
-	public boolean isOpen(int i, int j) {
-		checkOutOfBounds(i, j);
-		return (map[getPos(i, j)] == OPENED);
-		
+	/**
+	 * check if a cell at row and column is OPENED
+	 * @param i - row 
+	 * @param j - column
+	 * @return boolean - returns true if cell at row and column is OPENED
+	 * @throws IndexOutOfBoundsException
+	 */
+	public boolean isOpen(int i, int j) throws IndexOutOfBoundsException {
+		validateBounds(i, j);
+		return (map[getPos(i, j)] == OPENED);	
 	}
 	
-	private void checkOutOfBounds(int i, int j) {
+	/**
+	 * helper method - validate row and column
+	 * @param i
+	 * @param j
+	 * @throws IndexOutOfBoundsException
+	 */
+	private void validateBounds(int i, int j) throws IndexOutOfBoundsException {
 		if (i < 1 || j < 1 || i > size || j > size) {
 			throw new IndexOutOfBoundsException();
 		}		
 	}
 
-	public void open(int row, int col) {
-		checkOutOfBounds(row, col);
+	/**
+	 * open cell at row and column
+	 * @param row
+	 * @param col
+	 * @throws IndexOutOfBoundsException
+	 */
+	public void open(int row, int col) throws IndexOutOfBoundsException {
+		validateBounds(row, col);
 		int pos = getPos(row, col);
 		if (map[pos] == CLOSED) {
 			map[pos] = OPENED;
@@ -80,6 +112,8 @@ public class Percolation {
 			if (row < size && map[pos+size] != CLOSED) {
 				mapUnion.union(pos, pos+size);
 			}
+			
+			// If a first row cell is opened we can try to see if other open cells are connected
 			if (sizeFirstRow>0) {
 				for (int i = 0; i < sizeFirstRow; i++) {
 					int resizeOpenedCells = 0;
@@ -99,11 +133,21 @@ public class Percolation {
 		}
 	}
 
+	/**
+	 * check if a cell at row and column is FULL
+	 * @param i - row
+	 * @param j - column
+	 * @return boolean - returns true if cell state is FULL
+	 */
 	public boolean isFull(int i, int j) {
-		checkOutOfBounds(i, j);
+		validateBounds(i, j);
 		return (map[getPos(i, j)] == FULL);
 	}
 
+	/**
+	 * check if map percolates 
+	 * @return returns true if map percolates
+	 */
 	public boolean percolates() {
 		if (!this.perculatesStatus) {
 			for (int j = 0; j < sizeLastRow; j++) {
