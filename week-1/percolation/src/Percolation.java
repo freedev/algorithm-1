@@ -40,8 +40,8 @@ public class Percolation {
 	
 	/**
 	 * helper method - translate row and column into position
-	 * @param i - row 
-	 * @param j - column
+	 * @param i - row {@code int}
+	 * @param j - column {@code int}
 	 * @return
 	 */
 	private int getPos(int i, int j) {
@@ -50,9 +50,9 @@ public class Percolation {
 
 	/**
 	 * check if a cell at row and column is OPENED
-	 * @param i - row 
-	 * @param j - column
-	 * @return boolean - returns true if cell at row and column is OPENED
+	 * @param i - row {@code int}
+	 * @param j - column {@code int}
+	 * @return {@code boolean} - returns true if cell at row and column is OPENED
 	 * @throws IndexOutOfBoundsException
 	 */
 	public boolean isOpen(int i, int j) throws IndexOutOfBoundsException {
@@ -61,9 +61,9 @@ public class Percolation {
 	}
 	
 	/**
-	 * helper method - validate row and column
-	 * @param i
-	 * @param j
+	 * helper method - validate row and column, throws if row or column are not valid.
+	 * @param i - row {@code int}
+	 * @param j - column {@code int}
 	 * @throws IndexOutOfBoundsException
 	 */
 	private void validateBounds(int i, int j) throws IndexOutOfBoundsException {
@@ -74,8 +74,8 @@ public class Percolation {
 
 	/**
 	 * open cell at row and column
-	 * @param row
-	 * @param col
+	 * @param row {@code int}
+	 * @param column {@code int}
 	 * @throws IndexOutOfBoundsException
 	 */
 	public void open(int row, int col) throws IndexOutOfBoundsException {
@@ -135,8 +135,8 @@ public class Percolation {
 
 	/**
 	 * check if a cell at row and column is FULL
-	 * @param i - row
-	 * @param j - column
+	 * @param i - row {@code int}
+	 * @param j - column {@code int}
 	 * @return boolean - returns true if cell state is FULL
 	 */
 	public boolean isFull(int i, int j) {
