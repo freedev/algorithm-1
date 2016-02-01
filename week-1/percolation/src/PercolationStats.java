@@ -4,33 +4,34 @@ import edu.princeton.cs.algs4.StdStats;
 
 public class PercolationStats {
 
-    private int experimentsCount;
-    private Percolation pr;
+    private int testCount;
+    private Percolation perculation;
     private double[] fractions;
 
     /**
      * Performs T independent computational experiments on an N-by-N grid.
      * @param N
      * @param T
+     * @throws IllegalArgumentException
      */
-    public PercolationStats(int N, int T) {
+    public PercolationStats(int N, int T) throws IllegalArgumentException {
         if (N <= 0 || T <= 0) {
             throw new IllegalArgumentException("Given N <= 0 || T <= 0");
         }
-        experimentsCount = T;
-        fractions = new double[experimentsCount];
-        for (int expNum = 0; expNum < experimentsCount; expNum++) {
-            pr = new Percolation(N);
-            int openedSites = 0;
-            while (!pr.percolates()) {
-                int i = StdRandom.uniform(1, N + 1);
-                int j = StdRandom.uniform(1, N + 1);
-                if (!pr.isOpen(i, j)) {
-                    pr.open(i, j);
-                    openedSites++;
+        testCount = T;
+        fractions = new double[testCount];
+        for (int expNum = 0; expNum < testCount; expNum++) {
+            perculation = new Percolation(N);
+            int sitesOpen = 0;
+            while (!perculation.percolates()) {
+                int row = StdRandom.uniform(1, N + 1);
+                int col = StdRandom.uniform(1, N + 1);
+                if (!perculation.isOpen(row, col)) {
+                    perculation.open(row, col);
+                    sitesOpen++;
                 }
             }
-            double fraction = (double) openedSites / (N * N);
+            double fraction = (double) sitesOpen / (N * N);
             fractions[expNum] = fraction;
         }
     }
@@ -53,14 +54,14 @@ public class PercolationStats {
      * Returns lower bound of the 95% confidence interval.
      */
     public double confidenceLo() {
-        return mean() - ((1.96 * stddev()) / Math.sqrt(experimentsCount));
+        return mean() - ((1.96 * stddev()) / Math.sqrt(testCount));
     }
 
     /**
      * Returns upper bound of the 95% confidence interval.
      */
     public double confidenceHi() {
-        return mean() + ((1.96 * stddev()) / Math.sqrt(experimentsCount));
+        return mean() + ((1.96 * stddev()) / Math.sqrt(testCount));
     }
 
     public static void main(String[] args) {
@@ -68,9 +69,9 @@ public class PercolationStats {
         int T = Integer.parseInt(args[1]);
         PercolationStats ps = new PercolationStats(N, T);
 
-        String confidence = ps.confidenceLo() + ", " + ps.confidenceHi();
-        StdOut.println("mean                    = " + ps.mean());
-        StdOut.println("stddev                  = " + ps.stddev());
-        StdOut.println("95% confidence interval = " + confidence);
+        StdOut.println("stddev = " + ps.stddev());
+        StdOut.println("mean = " + ps.mean());
+        StdOut.println("95% confidence interval = " + 
+                ps.confidenceLo() + ", " + ps.confidenceHi());
     }
 }
