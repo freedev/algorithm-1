@@ -1,5 +1,11 @@
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
+/**
+ * 
+ * @author freedev
+ *
+ */
+
 public class Percolation {
 
     private static final int CLOSED = 0;
@@ -10,8 +16,6 @@ public class Percolation {
     private WeightedQuickUnionUF mapUnion;
     // percolation map
     private int[] map;
-    // stack first row opened sites
-    private int[] firstRow;
     // stack last row opened sites
     private int[] lastRow;
     // stack list of all opened sites
@@ -19,7 +23,7 @@ public class Percolation {
     // size of the map
     private int size;
     // number of opened sites within first row
-    private int sizeFirstRow;
+    private int firstRowPos;
     // number of opened sites within last row
     private int sizeLastRow;
     // number of all opened sites
@@ -40,14 +44,14 @@ public class Percolation {
         }
         size = N;
         map = new int[N * N];
-        // stack - optimization for first row
-        firstRow = new int[N];
         // stack - optimization for last row
         lastRow = new int[N];
         // stack - list of open sites
         openSites = new int[N * N];
         // Weighted union-find data type
         mapUnion = new WeightedQuickUnionUF(N * N);
+        // defaults to -1
+        firstRowPos = -1;
     }
 
     /**
@@ -115,8 +119,12 @@ public class Percolation {
             sizeOpenSites++;
 
             if (row == 1) {
-                firstRow[sizeFirstRow] = col - 1;
-                sizeFirstRow++;
+                if (firstRowPos == -1) {
+                    firstRowPos = col - 1;
+                } else {
+                    mapUnion.union(firstRowPos, pos);
+                }
+                
             }
             if (row == size) {
                 lastRow[sizeLastRow] = getPos(row, col);
@@ -142,21 +150,19 @@ public class Percolation {
 
             // If a first row site is opened we can try to see if other open
             // sites are connected
-            if (sizeFirstRow > 0) {
-                for (int i = 0; i < sizeFirstRow; i++) {
+            if (firstRowPos != -1) {
                     int resizeOpenSites = 0;
                     for (int j = 0; j < sizeOpenSites; j++) {
                         if (resizeOpenSites > 0) {
                             openSites[j - resizeOpenSites] = openSites[j];
                         }
                         if (map[openSites[j]] != FULL && mapUnion
-                                .connected(openSites[j], firstRow[i])) {
+                                .connected(openSites[j], firstRowPos)) {
                             resizeOpenSites++;
                             map[openSites[j]] = FULL;
                         }
                     }
                     sizeOpenSites -= resizeOpenSites;
-                }
             }
         }
     }
@@ -181,13 +187,11 @@ public class Percolation {
      * @return returns true if map percolates
      */
     public boolean percolates() {
-        if (!this.percolatesStatus) {
+        if (!this.percolatesStatus && firstRowPos != -1) {
             for (int j = 0; j < sizeLastRow; j++) {
                 if (map[lastRow[j]] != CLOSED) {
-                    for (int i = 0; i < sizeFirstRow; i++) {
-                        if (mapUnion.connected(lastRow[j], firstRow[i]))
-                            this.percolatesStatus = true;
-                    }
+                    if (mapUnion.connected(lastRow[j], firstRowPos))
+                        this.percolatesStatus = true;
                 }
             }
         }
