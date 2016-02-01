@@ -5,7 +5,6 @@ import edu.princeton.cs.algs4.StdStats;
 public class PercolationStats {
 
     private int testCount;
-    private Percolation perculation;
     private double[] fractions;
 
     /**
@@ -15,6 +14,7 @@ public class PercolationStats {
      * @throws IllegalArgumentException
      */
     public PercolationStats(int N, int T) throws IllegalArgumentException {
+        Percolation perculation;
         if (N <= 0 || T <= 0) {
             throw new IllegalArgumentException("Given N <= 0 || T <= 0");
         }
