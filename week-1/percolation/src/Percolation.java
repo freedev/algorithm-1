@@ -18,9 +18,9 @@ public class Percolation {
     private int[] map;
     // size of the map
     private int size;
-    // number of opened sites within first row
+    // a site within first row
     private int firstRowPos;
-    // number of opened sites within last row
+    // a site within last row
     private int lastRowPos;
     // percolate status
     private boolean percolatesStatus = false;
@@ -42,7 +42,7 @@ public class Percolation {
         mapUnion = new WeightedQuickUnionUF(N * N + 2);
         // defaults to -1
         firstRowPos = N * N;
-        lastRowPos = -1;
+        lastRowPos = N * N + 1;
     }
 
     /**
@@ -66,12 +66,10 @@ public class Percolation {
      * @param j
      *            column {@code int}
      * @return {@code boolean} returns true if site at row and column is OPENED
-     * 
-     * @throws IndexOutOfBoundsException
      */
     public boolean isOpen(int i, int j) {
         validateBounds(i, j);
-        return (map[getPos(i, j)] != CLOSED);
+        return (map[getPos(i, j)] == OPENED);
     }
 
     /**
@@ -82,7 +80,6 @@ public class Percolation {
      *            row {@code int}
      * @param j
      *            column {@code int}
-     * @throws IndexOutOfBoundsException
      */
     private void validateBounds(int i, int j) {
         if (i < 1 || j < 1 || i > size || j > size) {
@@ -98,48 +95,40 @@ public class Percolation {
      *            {@code int}
      * @param column
      *            {@code int}
-     * @throws IndexOutOfBoundsException
      */
     public void open(int row, int col) {
         validateBounds(row, col);
         int pos = getPos(row, col);
         if (map[pos] == CLOSED) {
+
             map[pos] = OPENED;
 
             if (row == 1) {
                 mapUnion.union(pos, firstRowPos);
-                map[pos] = FULL;
+            }
+            if (row == size) {
+                mapUnion.union(pos, lastRowPos);
             }
 
             // Left
-            if (col > 1 && map[pos - 1] != CLOSED) {
-                mapUnion.union(pos, pos - 1);
-                if (map[pos - 1] == FULL)
-                    map[pos] = FULL;
+            if (col > 1) {
+                if (map[pos - 1] != CLOSED)
+                    mapUnion.union(pos, pos - 1);
             }
             // Right
-            if (col < size && map[pos + 1] != CLOSED) {
-                mapUnion.union(pos, pos + 1);
-                if (map[pos + 1] == FULL)
-                    map[pos] = FULL;
+            if (col < size) {
+                if (map[pos + 1] != CLOSED)
+                    mapUnion.union(pos, pos + 1);
             }
             // Up
-            if (row > 1 && map[pos - size] != CLOSED) {
-                mapUnion.union(pos, pos - size);
-                if (map[pos - size] == FULL)
-                    map[pos] = FULL;
+            if (row > 1) {
+                if (map[pos - size] != CLOSED)
+                    mapUnion.union(pos, pos - size);
             }
             // Down
-            if (row < size && map[pos + size] != CLOSED) {
-                mapUnion.union(pos, pos + size);
-                if (map[pos + size] == FULL)
-                    map[pos] = FULL;
-            }
-            if (row == size) {
-                if (map[pos] == FULL) {
-                    percolatesStatus = true;
-                } else {
-                    lastRowPos = pos;
+            if (row < size) {
+                if (map[pos + size] != CLOSED) {
+                    mapUnion.union(pos, pos + size);
                 }
             }
 
@@ -159,8 +148,7 @@ public class Percolation {
         validateBounds(i, j);
         int pos = getPos(i, j);
         if (map[pos] == OPENED && mapUnion.connected(pos, firstRowPos)) {
-            map[pos] = FULL;
-            return true;
+              map[pos] = FULL;
         }
         if (map[pos] == FULL)
             return true;
@@ -174,8 +162,9 @@ public class Percolation {
      */
     public boolean percolates() {
         if (!this.percolatesStatus) {
-            if (lastRowPos != -1 && mapUnion.connected(lastRowPos, firstRowPos))
+            if (mapUnion.connected(lastRowPos, firstRowPos)) {
                 this.percolatesStatus = true;
+            }
         }
         return this.percolatesStatus;
     }

@@ -4,17 +4,16 @@ import edu.princeton.cs.algs4.StdStats;
 
 public class PercolationStats {
 
-    double _mean;
-    double _stddev;
-    double _confidenceLo;
-    double _confidenceHi;
+    private double mean;
+    private double stddev;
+    private double confidenceLo;
+    private double confidenceHi;
     /**
      * Performs T independent computational experiments on an N-by-N grid.
      * @param N
      * @param T
-     * @throws IllegalArgumentException
      */
-    public PercolationStats(int N, int T) throws IllegalArgumentException {
+    public PercolationStats(int N, int T) {
         int testCount;
         double[] fractions;
 
@@ -38,38 +37,38 @@ public class PercolationStats {
             double fraction = (double) sitesOpen / (N * N);
             fractions[expNum] = fraction;
         }
-        _mean = StdStats.mean(fractions);
-        _stddev = StdStats.stddev(fractions);
-        _confidenceLo = mean() - ((1.96 * stddev()) / Math.sqrt(testCount));
-        _confidenceHi = mean() + ((1.96 * stddev()) / Math.sqrt(testCount));
+        mean = StdStats.mean(fractions);
+        stddev = StdStats.stddev(fractions);
+        confidenceLo = mean() - ((1.96 * stddev()) / Math.sqrt(testCount));
+        confidenceHi = mean() + ((1.96 * stddev()) / Math.sqrt(testCount));
     }
 
     /**
      * Sample mean of percolation threshold.
      */
     public double mean() {
-        return _mean;
+        return mean;
     }
 
     /**
      * Sample standard deviation of percolation threshold.
      */
     public double stddev() {
-        return _stddev;
+        return stddev;
     }
 
     /**
      * Returns lower bound of the 95% confidence interval.
      */
     public double confidenceLo() {
-        return _confidenceLo;
+        return confidenceLo;
     }
 
     /**
      * Returns upper bound of the 95% confidence interval.
      */
     public double confidenceHi() {
-        return _confidenceHi;
+        return confidenceHi;
     }
 
     public static void main(String[] args) {
