@@ -8,15 +8,16 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
 
-    private static final int CLOSED = 0;
-    private static final int OPENED = 1;
-    private static final int FULL = 2;
+    private static final byte CLOSED = 0;
+    private static final byte OPENED = 1;
+    private static final byte FULL = 2;
 
     // where (1, 1) is the upper-left site
     private WeightedQuickUnionUF mapUnion;
     private WeightedQuickUnionUF mapFully;
     // percolation map
     private byte[] map;
+    private byte[] mapBit;
     // size of the map
     private int size;
     // a site within first row
@@ -39,6 +40,7 @@ public class Percolation {
         }
         size = N;
         map = new byte[N * N];
+        mapBit = new byte[(int)Math.floor((N*N)/4)];
         // Weighted union-find data type
         mapUnion = new WeightedQuickUnionUF(N * N + 2);
         mapFully = new WeightedQuickUnionUF(N * N + 1);
@@ -102,9 +104,9 @@ public class Percolation {
         validateBounds(row, col);
 
         int pos = getPos(row, col);
-        if (map[pos] == CLOSED) {
+        if (getMapValue(pos) == CLOSED) {
 
-            map[pos] = OPENED;
+            setMapValue(pos, OPENED);
 
             if (row == 1) {
                 mapUnion.union(pos, firstRowPos);
@@ -158,10 +160,10 @@ public class Percolation {
     public boolean isFull(int row, int col) {
         validateBounds(row, col);
         int pos = getPos(row, col);
-        if (map[pos] == OPENED && mapFully.connected(pos, firstRowPos)) {
-            map[pos] = FULL;
+        if (getMapValue(pos) == OPENED && mapFully.connected(pos, firstRowPos)) {
+            setMapValue(pos, FULL);
         }
-        if (map[pos] == FULL)
+        if (getMapValue(pos) == FULL)
             return true;
         return false;
     }
@@ -179,5 +181,48 @@ public class Percolation {
         }
         return this.percolatesStatus;
     }
+    
+    private int getMapValue(int pos) {
+        return map[pos];
+    }
+
+    private void setMapValue(int pos, byte value) {
+        map[pos] = value;
+    }
+    
+
+    private int getMapBytePos(int pos) {
+        return Math.abs(pos/4);
+    }
+
+    private int getMapBitPos(int pos) {
+        return (pos%4)*2;
+    }
+    
+    private int getMapBitValue(int site_pos) {
+        int pos = getMapBytePos(site_pos);
+        int bit = getMapBitPos(site_pos);
+        return ((mapBit[pos] >> bit ) & 3 );
+    }
+
+    private void setMapBitValue(int site_pos, byte value) {
+        int pos = getMapBytePos(site_pos);
+        int bit = getMapBitPos(site_pos);
+        int byte_value = (byte) (value << bit);
+        mapBit[pos] = (byte)((mapBit[pos] & (~(3 << bit)) ) | byte_value);
+    }
+    
+//    public static void main(String[] args) {
+//        Percolation p = new Percolation(10);
+//       
+//        for (int row = 1; row < 10; row++) {
+//            for (int col = 1; col < 10; col++) {
+//                System.out.println(p.getMapBytePos(row, col) + " " + p.getMapBitPos(row, col));
+//                p.setMapBitValue(row, col, (byte)(col%3));
+//                System.out.println(p.getMapBitValue(row, col));
+//            }
+//        }
+//    }
+    
 
 }
