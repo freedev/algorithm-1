@@ -16,7 +16,7 @@ public class Percolation {
     private WeightedQuickUnionUF mapUnion;
     private WeightedQuickUnionUF mapFully;
     // percolation map
-    private char[] map;
+    private byte[] map;
     // size of the map
     private int size;
     // a site within first row
@@ -38,10 +38,10 @@ public class Percolation {
             throw new IllegalArgumentException();
         }
         size = N;
-        map = new char[N * N];
+        map = new byte[N * N];
         // Weighted union-find data type
         mapUnion = new WeightedQuickUnionUF(N * N + 2);
-        mapFully = new WeightedQuickUnionUF(N * N);
+        mapFully = new WeightedQuickUnionUF(N * N + 1);
         // defaults to -1
         firstRowPos = N * N;
         lastRowPos = N * N + 1;
