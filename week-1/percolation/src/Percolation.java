@@ -25,7 +25,6 @@ public class Percolation {
     // a site within last row
     private int lastRowPos;
     // percolate status
-    private boolean percolatesStatus = false;
 
     /**
      * Create N-by-N grid, with all sites blocked Initializes all data
@@ -181,13 +180,14 @@ public class Percolation {
      * @return returns true if map percolates
      */
     public boolean percolates() {
-        if (!this.percolatesStatus) {
-            if (mapUnion != null && mapUnion.connected(lastRowPos, firstRowPos)) {
+        if (lastRowPos > 0) {
+            if (mapUnion != null
+                    && mapUnion.connected(lastRowPos, firstRowPos)) {
                 mapUnion = null;
-                this.percolatesStatus = true;
+                lastRowPos = 0;
             }
         }
-        return this.percolatesStatus;
+        return (lastRowPos == 0);
     }
 
     /**
@@ -203,6 +203,7 @@ public class Percolation {
 
     /**
      * set site status
+     * 
      * @param pos
      * @param value
      */
@@ -213,6 +214,7 @@ public class Percolation {
 
     /**
      * get byte array position for site
+     * 
      * @param pos
      * @return
      */
@@ -222,6 +224,7 @@ public class Percolation {
 
     /**
      * get two bit position for site
+     * 
      * @param pos
      * @return
      */
@@ -231,6 +234,7 @@ public class Percolation {
 
     /**
      * bitwise get site value
+     * 
      * @param sitePos
      * @return
      */
@@ -242,6 +246,7 @@ public class Percolation {
 
     /**
      * bitwise set site value
+     * 
      * @param sitePos
      * @param value
      */
