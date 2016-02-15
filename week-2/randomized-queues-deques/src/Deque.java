@@ -21,9 +21,9 @@ public class Deque<Item> implements Iterable<Item> {
      */
     private class LLNode implements Iterator<Item>
     {
-        LLNode prev;
-        LLNode next;
-        Item data;
+        private LLNode prev;
+        private LLNode next;
+        private Item data;
 
         /**
          * 
@@ -118,17 +118,17 @@ public class Deque<Item> implements Iterable<Item> {
 
     /**
      * Insert a node between two nodes
-     * @param _head The prev node 
-     * @param _tail The next node 
+     * @param h The prev node 
+     * @param t The next node 
      * @param node The node to add
      */
-    private void addNode(LLNode _head, LLNode _tail, Item element) 
+    private void addNode(LLNode h, LLNode t, Item element) 
     {       
         if (element == null)
             throw new NullPointerException();
-        LLNode node = new LLNode(element, _head, _tail);
-        _head.next = node;
-        _tail.prev = node;
+        LLNode node = new LLNode(element, h, t);
+        h.next = node;
+        t.prev = node;
         size++;
     }
     
