@@ -26,22 +26,24 @@ public class RandomizedQueueTest {
     @Test
     public void sampleTest2() {
         RandomizedQueue<Integer> rq = new RandomizedQueue<>();
-
-        rq.enqueue(0);
-        rq.enqueue(1);
-        rq.enqueue(2);
         
-        int[] count = new int[3];
-
+        int size = 3;
+        
+        for (int i = 0; i < size; i++) {
+            rq.enqueue(i);
+        }
+        
+        int[] count = new int[size];
+        
         for (int i = 0; i < 100000; i++) {
             Integer c = rq.sample();
             count[c] ++;
             Assert.assertNotNull(c);
         }
         
-        Assert.assertTrue(count[0] > 0);
-        Assert.assertTrue(count[1] > 0);
-        Assert.assertTrue(count[2] > 0);
+        for (int i = 0; i < size; i++) {
+            Assert.assertTrue(count[i] > 0);
+        }
         
     }
 
@@ -79,7 +81,7 @@ public class RandomizedQueueTest {
 
         RandomizedQueue<Integer> rq = new RandomizedQueue<>();
         List<Integer> list = new ArrayList<>();
-        int size = 1000000;
+        int size = 5;
 
         // rq.enqueue(0);
         // rq.enqueue(1);
