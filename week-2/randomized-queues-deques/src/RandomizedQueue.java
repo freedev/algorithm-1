@@ -1,6 +1,8 @@
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.StdRandom;
 
 /**
  * 
@@ -34,6 +36,8 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         @Override
         public Item next() {
             // TODO Auto-generated method stub
+            if (pos >= list.length)
+                throw new NoSuchElementException();
             return list[pos++];
         }
 
@@ -47,7 +51,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         head = 0;
         tail = 0;
         size = 0;
-        list = (Item[]) new Object[1];
+        list = createArray(1);
     }
 
     /**
@@ -68,6 +72,10 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         return size;
     }
 
+    /**
+     * 
+     * @return
+     */
     private int getArraySize() {
         return 1 << arraySize;
     }
@@ -78,41 +86,38 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
      */
     public void enqueue(Item item) // add the item
     {
+        // StdOut.println("enqueue - head: "+head+ " tail: "+tail);
         int curSize = size();
         if (getArraySize() == curSize) {
             arraySize++;
-            StdOut.println("- new size: " + getArraySize());
-            Item[] newList = (Item[]) new Object[getArraySize()];
-            int pos = 0;
-            for (int i = 0; i < size; i++) {
-                if (i >= tail)
-                    pos = size;
-                newList[i + pos] = list[i];
+            Item[] newList = createArray(getArraySize());
+            if (head < tail) {
+                for (int i = 0; (i + head) < tail; i++) {
+                    newList[i] = list[i + head];
+                }
+                tail = tail - head;
+                head = 0;
+            } else {
+                for (int i = 0; i < tail; i++) {
+                    newList[i] = list[i];
+                }
+                for (int i = head; i < list.length; i++) {
+                    newList[i + list.length] = list[i];
+                }
+                head = head + list.length;
             }
-            if (pos > 0)
-                head += size;
             list = newList;
         }
         list[tail] = item;
-        swap(list, tail, getRandomPos(size, head, tail));
+        if (size > 0) {
+            int rPos = getRandomPos(size, head, tail);
+            swap(list, tail, rPos);
+        }
         tail++;
         if (tail == getArraySize()) {
             tail = 0;
         }
         size++;
-        printStatus("* enqueue");
-    }
-
-    /**
-     * 
-     * @param pos
-     * @return
-     */
-    private int getArrayPos(int pos) {
-        if (pos > tail) {
-            return pos - tail;
-        }
-        return pos;
     }
 
     /**
@@ -131,16 +136,14 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
      * @return
      */
     private int getRandomPos(int s, int h, int t) {
+        int pos = StdRandom.uniform(s);
         if (h < t) {
-            int pos = (int) (Math.random() * (t - h));
-            return getArrayPos(pos + h);
-        } else if (h > t) {
-            int pos = (int) (Math.random() * (s - h + t));
+            return (pos + h);
+        } else {
             if (pos > t)
-                return getArrayPos(pos + h);
-            return getArrayPos(pos);
+                return pos + (h - t - 1);
         }
-        return h;
+        return pos;
     }
 
     /**
@@ -149,6 +152,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
      */
     public Item dequeue() // remove and return a random item
     {
+        // StdOut.println("dequeue - head: "+head+ " tail: "+tail);
         if (size == 0)
             throw new java.util.NoSuchElementException();
         Item item = list[head];
@@ -160,31 +164,26 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         size--;
         if (size == (1 << (arraySize - 2))) {
             arraySize--;
-            StdOut.println("- downsize: " + getArraySize());
-            Item[] newList = (Item[]) new Object[getArraySize()];
-            int pos = 0;
-            for (int i = 0; i < getArraySize(); i++) {
-                if ((i + getArraySize()) >= head)
-                    pos = head;
-                newList[i] = list[i + pos];
-            }
-            if (pos > 0) {
+            Item[] newList = createArray(getArraySize());
+            if (tail > head) {
+                for (int i = 0; (head + i) < tail; i++) {
+                    newList[i] = list[head + i];
+                }
+                tail = tail - head;
                 head = 0;
-                tail -= pos;
+            } else {
+                for (int i = 0; i < tail; i++) {
+                    newList[i] = list[i];
+                }
+                for (int i = head; i < list.length; i++) {
+                    newList[i - newList.length] = list[i];
+                }
+                head -= newList.length;
             }
             list = newList;
         }
 
-        printStatus("dequeue");
         return item;
-    }
-
-    /**
-     * 
-     */
-    private void printStatus(String msg) {
-        StdOut.println(msg + " - size: " + size() + " head: " + head + " tail: "
-                + tail + " list[head]: " + list[head]);
     }
 
     /**
@@ -193,7 +192,30 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
      */
     public Item sample() // return (but do not remove) a random item
     {
-        return list[getRandomPos(size, head, tail)];
+        if (size == 0)
+            throw new java.util.NoSuchElementException();
+        int pos = 0;
+        if (size > 1) {
+            pos = getRandomPos(size, head, tail - 1);
+            if (pos >= list.length) {
+                StdOut.println(pos + " size: " + size + " head: " + head
+                        + " tail: " + tail);
+            } else if (list[pos] == null) {
+                StdOut.println(pos + " size: " + size + " head: " + head
+                        + " tail: " + tail);
+            }
+            return list[pos];
+        }
+        return list[head];
+    }
+
+    /**
+     * 
+     * @param s
+     * @return
+     */
+    private Item[] createArray(int s) {
+        return (Item[]) new Object[s];
     }
 
     /**
@@ -203,17 +225,18 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
                                      // items in random order
     {
         RQIterator rqi = new RQIterator();
-        rqi.list = (Item[]) new Object[size];
+        rqi.list = createArray(size);
         int pos = 0;
         for (int i = 0; i < size; i++) {
             if (tail > head) {
                 rqi.list[i] = list[head + i];
             } else {
                 if (i >= tail)
-                    pos = (head-tail);
+                    pos = (head - tail);
                 rqi.list[i] = list[i + pos];
-                swap(rqi.list, i, getRandomPos(size, 0, i));
             }
+            if (i > 1)
+                swap(rqi.list, i, getRandomPos(i, 0, i - 1));
         }
         return rqi;
     }
