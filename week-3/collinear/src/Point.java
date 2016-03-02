@@ -70,7 +70,7 @@ public class Point implements Comparable<Point> {
             return Double.POSITIVE_INFINITY;
         if (this.y == that.y)
             return +0.0;
-        return ((double)(this.y - that.y)) / ((double)(this.x - that.x));
+        return ((double) (this.y - that.y)) / ((double) (this.x - that.x));
     }
 
     /**
@@ -140,20 +140,6 @@ public class Point implements Comparable<Point> {
     public String toString() {
         /* DO NOT MODIFY */
         return "(" + x + ", " + y + ")";
-    }
-
-    private static boolean areCollinear(Point p, Point q, Point r, Point s) {
-        // long a1 = (p.y - q.y) * (p.x - r.x);
-        // long b1 = (p.y - r.y) * (p.x - q.x);
-        // long c1 = (p.y - q.y) * (p.x - s.x);
-        // long d1 = (p.y - s.y) * (p.x - q.x);
-        double a1 = p.slopeTo(q);
-        double b1 = p.slopeTo(r);
-        double c1 = p.slopeTo(s);
-        double d1 = q.slopeTo(r);
-        double e1 = q.slopeTo(s);
-        double f1 = r.slopeTo(s);
-        return (a1 == b1 && a1 == c1 && a1 == d1);
     }
 
     /**
