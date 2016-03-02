@@ -14,8 +14,8 @@ import edu.princeton.cs.algs4.StdDraw;
 
 public class Point implements Comparable<Point> {
 
-    private final int x;     // x-coordinate of this point
-    private final int y;     // y-coordinate of this point
+    private final int x; // x-coordinate of this point
+    private final int y; // y-coordinate of this point
 
     /**
      * Initializes a new point.
@@ -93,24 +93,41 @@ public class Point implements Comparable<Point> {
         return this.y - that.y;
     }
 
+    private class SlopeComparator implements Comparator<Point> {
+        
+        private Point p;
+        
+        public SlopeComparator(Point p) {
+            this.p = p;
+        }
+
+        @Override
+        public int compare(Point o1, Point o2) {
+            if (o1 == null || o2 == null) {
+                throw new java.lang.NullPointerException();
+            }
+            
+            double s1 = o1.slopeTo(p);
+            double s2 = o2.slopeTo(p);
+            
+            if (s1 > s2)
+                return 1;
+            if (s1 < s2) 
+                return -1;
+            return 0;
+        }
+        
+    }
+    
     /**
-     * Compares two points by the slope they make with this point.
-     * The slope is defined as in the slopeTo() method.
+     * Compares two points by the slope they make with this point. The slope is
+     * defined as in the slopeTo() method.
      *
      * @return the Comparator that defines this ordering on points
      */
     public Comparator<Point> slopeOrder() {
-        return new Comparator<Point>() {
-            
-            @Override
-            public int compare(Point o1, Point o2) {
-                // TODO Auto-generated method stub
-                return o1.compareTo(o2);
-            }
-        };
-        /* YOUR CODE HERE */
+        return new SlopeComparator(this);
     }
-
 
     /**
      * Returns a string representation of this point.
@@ -123,12 +140,12 @@ public class Point implements Comparable<Point> {
         /* DO NOT MODIFY */
         return "(" + x + ", " + y + ")";
     }
-    
+
     private static boolean areCollinear(Point p, Point q, Point r, Point s) {
-//        long a1 = (p.y - q.y) * (p.x - r.x);
-//        long b1 = (p.y - r.y) * (p.x - q.x);
-//        long c1 = (p.y - q.y) * (p.x - s.x);
-//        long d1 = (p.y - s.y) * (p.x - q.x);
+        // long a1 = (p.y - q.y) * (p.x - r.x);
+        // long b1 = (p.y - r.y) * (p.x - q.x);
+        // long c1 = (p.y - q.y) * (p.x - s.x);
+        // long d1 = (p.y - s.y) * (p.x - q.x);
         double a1 = p.slopeTo(q);
         double b1 = p.slopeTo(r);
         double c1 = p.slopeTo(s);
