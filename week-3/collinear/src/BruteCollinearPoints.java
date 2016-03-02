@@ -1,7 +1,6 @@
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * 
@@ -21,18 +20,23 @@ public class BruteCollinearPoints {
         if (points == null) {
             throw new java.lang.NullPointerException();
         }
-        Set<String> setPoints = new TreeSet<>();
         this.points = new Point[points.length];
         for (int i = 0; i < points.length; i++) {
             if (points[i] == null) {
                 throw new java.lang.NullPointerException();
             } else {
                 this.points[i] = points[i];
-                if (setPoints.contains(points[i].toString()))
-                    throw new java.lang.IllegalArgumentException();
-                else
-                    setPoints.add(points[i].toString());
             }
+        }
+        if (this.points.length > 1) {
+            Arrays.sort(this.points);
+            for (int i = 1; i < this.points.length; i++) {
+                if (this.points[i-1].compareTo(this.points[i]) == 0)
+                    throw new java.lang.IllegalArgumentException();
+            }
+        }
+        if (segments == null) {
+            buildSegments();
         }
     }
 
@@ -40,10 +44,13 @@ public class BruteCollinearPoints {
             Point[] result, List<LineSegment> list) {
         if (len == 0) {
             double s = result[0].slopeTo(result[1]);
-            if (s == result[0].slopeTo(result[2]) && s == result[0].slopeTo(result[3]) && 
-                s == result[1].slopeTo(result[2]) && s == result[1].slopeTo(result[3]) && 
-                s == result[2].slopeTo(result[3])) {
-//                Arrays.sort(result);
+            if (s == result[0].slopeTo(result[2]) 
+                && s == result[0].slopeTo(result[3])
+//                && s == result[1].slopeTo(result[2]) 
+//                && s == result[1].slopeTo(result[3])
+//                && s == result[2].slopeTo(result[3])
+                ) {
+                Arrays.sort(result);
                 list.add(new LineSegment(result[0], result[3]));
             }
             return;
@@ -54,21 +61,7 @@ public class BruteCollinearPoints {
         }
     }
     
-    /**
-     * 
-     * @return
-     */
-    public int numberOfSegments() {
-        if (segments != null)
-            return segments.length;
-        return 0;
-    }
-
-    /**
-     * 
-     * @return
-     */
-    public LineSegment[] segments() {
+    private void buildSegments() {
         if (segments == null) {
             Point[] checkSegment = new Point[4];
             List<LineSegment> lsegments = new LinkedList<>();
@@ -78,7 +71,33 @@ public class BruteCollinearPoints {
                 segments[i] = lsegments.remove(0);
             }
         }
-        return segments;
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    public int numberOfSegments() {
+        if (segments == null) {
+            buildSegments();
+        }
+        return segments.length;
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public LineSegment[] segments() {
+        if (segments == null) {
+            buildSegments();
+        }
+        LineSegment[] s = new LineSegment[segments.length];
+        for (int i = 0; i < segments.length; i++) {
+            s[i] = segments[i];
+        }
+
+        return s;
     }
 
 }
