@@ -2,6 +2,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+//import edu.princeton.cs.algs4.StdOut;
+
 /**
  * 
  * @author freedev
@@ -51,6 +53,11 @@ public class BruteCollinearPoints {
 //                && s == result[2].slopeTo(result[3])
                 ) {
                 Arrays.sort(result);
+//                for (int j = 0; j < result.length; j++) {
+//                    StdOut.print( result[j]);
+//                    StdOut.print("-");
+//                }
+//                StdOut.println("-");
                 list.add(new LineSegment(result[0], result[3]));
             }
             return;

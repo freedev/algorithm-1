@@ -3,8 +3,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
 
-//import edu.princeton.cs.algs4.StdOut;
-//
 /**
  * 
  * @author freedev
@@ -48,8 +46,8 @@ public class FastCollinearPoints {
             TreeSet<String> segmentSet = new TreeSet<>();
             List<LineSegment> lsegments = new LinkedList<>();
             for (int i = 0; i < givenPoints.length; i++) {
-//                StdOut.println("-");
                 Arrays.sort(this.points, givenPoints[i].slopeOrder());
+//                StdOut.println("-");
 //                for (int j = 0; j < this.points.length; j++) {
 //                    StdOut.print(this.points[j]);
 //                    StdOut.print("-");
@@ -77,12 +75,13 @@ public class FastCollinearPoints {
                             }
                             Arrays.sort(result);
                             if (!segmentSet.contains(result[0].toString()
-                                    + result[3].toString())) {
+                                    + result[result.length-1].toString())) {
                                 segmentSet.add(result[0].toString()
-                                        + result[3].toString());
+                                        + result[result.length-1].toString());
                                 lsegments.add(
-                                        new LineSegment(result[0], result[3]));
+                                        new LineSegment(result[0], result[result.length-1]));
                             }
+                            break;
                         }
                     }
                 }
