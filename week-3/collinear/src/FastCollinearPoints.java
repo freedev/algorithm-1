@@ -43,19 +43,30 @@ public class FastCollinearPoints {
     private void buildSegments(Point[] givenPoints) {
         if (segments == null) {
             List<LineSegment> lsegments = new LinkedList<>();
-            for (int i = 0; i < givenPoints.length; i++) {
+            for (int i = 0; i < givenPoints.length; i++) 
+            {
                 Arrays.sort(this.points, givenPoints[i].slopeOrder());
-                for (int j = 0; j < this.points.length-2; j++) {
-                    if (givenPoints[i].compareTo(this.points[j]) != 0 &&
-                            givenPoints[i].compareTo(this.points[j+1]) != 0 &&
-                            givenPoints[i].compareTo(this.points[j+2]) != 0 
-                            ) {
-                        double s = givenPoints[i].slopeTo(this.points[j]);
-                        if (s == givenPoints[i].slopeTo(this.points[j+1]) 
-                                && s == givenPoints[i].slopeTo(this.points[j+2])) {
-                                lsegments.add(new LineSegment(givenPoints[i], this.points[j+2]));
+                for (int j = 0; j < this.points.length-3; j++) {
+                    double s = this.points[j].slopeTo(this.points[j+1]);
+                    if (s == this.points[j].slopeTo(this.points[j+2])) {
+                        int k = 2;
+                        boolean found = false;
+                        while ((j+k) < this.points.length-1) {
+                            if (s == this.points[j].slopeTo(this.points[j+k+1])) {
+                                found = true;
+                            } else {
+                                break;
                             }
-                        
+                            k++;
+                        }
+                        if (found && k > 2) {
+                            Point[] result = new Point[k+1];
+                            for (int jj = 0; jj < k+1; jj++) {
+                                result[jj] = this.points[j+jj];
+                            }
+                            Arrays.sort(result);
+                            lsegments.add(new LineSegment(result[0], result[k]));
+                        }
                     }
                 }
             }
