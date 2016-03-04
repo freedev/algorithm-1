@@ -55,33 +55,31 @@ public class FastCollinearPoints {
 //                StdOut.println("-");
                 for (int j = 1; j < this.points.length - 2; j++) {
                     double s = this.points[0].slopeTo(this.points[j]);
-                    if (s == this.points[0].slopeTo(this.points[j + 1])) {
-                        int k = 1;
-                        boolean found = false;
-                        while ((j + k) < this.points.length - 1) {
-                            if (s == this.points[0]
-                                    .slopeTo(this.points[j + k + 1])) {
-                                found = true;
-                            } else {
-                                break;
-                            }
-                            k++;
-                        }
-                        if (found && k > 1) {
-                            Point[] result = new Point[k + 2];
-                            result[0] = this.points[0];
-                            for (int jj = 0; jj < k + 1; jj++) {
-                                result[jj + 1] = this.points[j + jj];
-                            }
-                            Arrays.sort(result);
-                            if (!segmentSet.contains(result[0].toString()
-                                    + result[result.length-1].toString())) {
-                                segmentSet.add(result[0].toString()
-                                        + result[result.length-1].toString());
-                                lsegments.add(
-                                        new LineSegment(result[0], result[result.length-1]));
-                            }
+                    int k = 0;
+                    boolean found = false;
+                    while ((j + k) < this.points.length - 1) {
+                        if (s == this.points[0]
+                                .slopeTo(this.points[j + k + 1])) {
+                            found = true;
+                        } else {
                             break;
+                        }
+                        k++;
+                    }
+                    if (found && k > 1) {
+                        Point[] result = new Point[k + 2];
+                        result[0] = this.points[0];
+                        for (int jj = 0; jj < k + 1; jj++) {
+                            result[jj + 1] = this.points[j + jj];
+                        }
+                        j = j + k + 1;
+                        Arrays.sort(result);
+                        if (!segmentSet.contains(result[0].toString()
+                                + result[result.length-1].toString())) {
+                            segmentSet.add(result[0].toString()
+                                    + result[result.length-1].toString());
+                            lsegments.add(
+                                    new LineSegment(result[0], result[result.length-1]));
                         }
                     }
                 }
