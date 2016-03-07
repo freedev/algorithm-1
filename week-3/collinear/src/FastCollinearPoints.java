@@ -1,5 +1,7 @@
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.TreeSet;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 
@@ -14,27 +16,65 @@ public class FastCollinearPoints {
     private class PairOfPoints implements Comparable<PairOfPoints> {
         private Point start;
         private Point end;
+
         public PairOfPoints(Point s, Point e) {
             this.start = s;
             this.end = e;
         }
-        public int compare(PairOfPoints o1, PairOfPoints o2) {
-            // TODO Auto-generated method stub
-            if (o1.start.compareTo(o2.start) == 0)
-                return o1.end.compareTo(o2.end);
-            else
-                return o1.start.compareTo(o2.start);
-        }
+
         @Override
         public int compareTo(PairOfPoints o) {
             // TODO Auto-generated method stub
-            if (this.start.compareTo(o.start) == 0)
+            int startCompare = this.start.compareTo(o.start);
+            if (startCompare == 0)
                 return this.end.compareTo(o.end);
-            else
-                return this.start.compareTo(o.start);
+            return startCompare;
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.lang.Object#equals(java.lang.Object)
+         */
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            PairOfPoints other = (PairOfPoints) obj;
+            if (!getOuterType().equals(other.getOuterType()))
+                return false;
+            if (end == null) {
+                if (other.end != null)
+                    return false;
+            } else if (end.compareTo(other.end) != 0)
+                return false;
+            if (start == null) {
+                if (other.start != null)
+                    return false;
+            } else if (start.compareTo(other.start) != 0)
+                return false;
+            return true;
+        }
+
+        private FastCollinearPoints getOuterType() {
+            return FastCollinearPoints.this;
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.lang.Object#toString()
+         */
+        @Override
+        public String toString() {
+            return "[" + start + ", " + end + "]";
         }
     }
-    
+
     /**
      * 
      * @param points
@@ -65,7 +105,7 @@ public class FastCollinearPoints {
 
     private void buildSegments(Point[] givenPoints) {
         if (segments == null) {
-            TreeSet<PairOfPoints> segmentSet = new TreeSet<>();
+            List<PairOfPoints> segmentArray = new ArrayList<>();
             for (int i = 0; i < givenPoints.length; i++) {
                 Arrays.sort(this.points, givenPoints[i].slopeOrder());
                 // StdOut.println("-");
@@ -93,19 +133,33 @@ public class FastCollinearPoints {
                         }
                         j = j + k + 1;
                         Arrays.sort(result);
-                        PairOfPoints l = new PairOfPoints(result[0], result[result.length-1]);
-                        if (!segmentSet.contains(l)) {
-                            segmentSet.add(l);
-                        }
+                        PairOfPoints l = new PairOfPoints(result[0],
+                                result[result.length - 1]);
+                        segmentArray.add(l);
                     }
                     j++;
-                 }
+                }
             }
-            segments = new LineSegment[segmentSet.size()];
-            int i = 0;
-            for (PairOfPoints pp : segmentSet) {
-                segments[i] = new LineSegment(pp.start, pp.end);
-                i++;
+            Collections.sort(segmentArray);
+            LineSegment[] segmentsTmp = new LineSegment[segmentArray.size()];
+            int counter = 0;
+            int pos = 0;
+            if (segmentArray.size() > 0) {
+                segmentsTmp[counter] = new LineSegment(
+                        segmentArray.get(0).start, segmentArray.get(0).end);
+                counter++;
+            }
+            for (int i = 1; i < segmentArray.size(); i++) {
+                if (!segmentArray.get(pos).equals(segmentArray.get(i))) {
+                    pos = i;
+                    segmentsTmp[counter] = new LineSegment(
+                            segmentArray.get(i).start, segmentArray.get(i).end);
+                    counter++;
+                }
+            }
+            segments = new LineSegment[counter];
+            for (int i = 0; i < counter; i++) {
+                segments[i] = segmentsTmp[i];
             }
         }
     }
