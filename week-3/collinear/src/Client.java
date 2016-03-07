@@ -1,3 +1,5 @@
+import java.awt.Color;
+
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
@@ -20,16 +22,25 @@ public class Client {
         StdDraw.show(0);
         StdDraw.setXscale(0, 32768);
         StdDraw.setYscale(0, 32768);
+        StdDraw.setPenColor(Color.RED);
         for (Point p : points) {
             p.draw();
         }
         StdDraw.show();
 
         // print and draw the line segments
-        BruteCollinearPoints collinear = new BruteCollinearPoints(points);
-        //FastCollinearPoints collinear = new FastCollinearPoints(points);
-        for (LineSegment segment : collinear.segments()) {
+//        BruteCollinearPoints collinear = new BruteCollinearPoints(points);
+//        StdOut.println("---- "+ collinear.numberOfSegments());
+//        StdDraw.setPenColor(Color.BLUE);
+//        for (LineSegment segment : collinear.segments()) {
 //            StdOut.println(segment);
+//            segment.draw();
+//        }
+        FastCollinearPoints collinear2 = new FastCollinearPoints(points);
+        StdOut.println("---- "+ collinear2.numberOfSegments());
+        StdDraw.setPenColor(Color.GREEN);
+        for (LineSegment segment : collinear2.segments()) {
+            StdOut.println(segment);
             segment.draw();
         }
     }
