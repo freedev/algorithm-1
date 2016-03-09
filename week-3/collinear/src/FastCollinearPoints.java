@@ -91,7 +91,7 @@ public class FastCollinearPoints {
                         for (int jj = 0; jj < k + 1; jj++) {
                             result[jj + 1] = this.points[j + jj];
                         }
-                        j = j + k + 1;
+                        j = j + k;
                         Arrays.sort(result);
                         PairOfPoints l = new PairOfPoints(result[0], result[result.length-1]);
                         if (!segmentSet.contains(l)) {
