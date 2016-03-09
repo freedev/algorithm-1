@@ -4,7 +4,7 @@ import java.util.TreeSet;
 /**
  * 
  * @author freedev
- *
+ * 98.78
  */
 public class FastCollinearPoints {
 
