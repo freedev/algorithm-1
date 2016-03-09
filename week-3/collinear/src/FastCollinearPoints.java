@@ -14,10 +14,12 @@ public class FastCollinearPoints {
     private class PairOfPoints implements Comparable<PairOfPoints> {
         private Point start;
         private Point end;
+
         public PairOfPoints(Point s, Point e) {
             this.start = s;
             this.end = e;
         }
+
         public int compare(PairOfPoints o1, PairOfPoints o2) {
             // TODO Auto-generated method stub
             if (o1.start.compareTo(o2.start) == 0)
@@ -25,6 +27,7 @@ public class FastCollinearPoints {
             else
                 return o1.start.compareTo(o2.start);
         }
+
         @Override
         public int compareTo(PairOfPoints o) {
             // TODO Auto-generated method stub
@@ -34,7 +37,7 @@ public class FastCollinearPoints {
                 return this.start.compareTo(o.start);
         }
     }
-    
+
     /**
      * 
      * @param points
@@ -68,6 +71,7 @@ public class FastCollinearPoints {
             TreeSet<PairOfPoints> segmentSet = new TreeSet<>();
             for (int i = 0; i < givenPoints.length; i++) {
                 Arrays.sort(this.points, givenPoints[i].slopeOrder());
+
                 // StdOut.println("-");
                 // for (int j = 0; j < this.points.length; j++) {
                 // StdOut.print(this.points[j]);
@@ -78,10 +82,26 @@ public class FastCollinearPoints {
                 while (j < (this.points.length - 2)) {
                     double s = this.points[0].slopeTo(this.points[j]);
                     int k = 0;
+                    boolean firstIngres = true;
                     while ((j + k) < this.points.length - 1) {
                         if (s != this.points[0]
                                 .slopeTo(this.points[j + k + 1])) {
                             break;
+                        }
+                        if (firstIngres) {
+                            int back = 0;
+                            if (j > 1) {
+                                while (s == this.points[0]
+                                        .slopeTo(this.points[j + k - back])) {
+                                    back++;
+                                    if ((j + k - back) < 1) {
+                                        break;
+                                    }
+                                }
+                                j -= back - 1;
+                                k += back - 1;
+                            }
+                            firstIngres = false;
                         }
                         k++;
                     }
@@ -93,13 +113,15 @@ public class FastCollinearPoints {
                         }
                         j = j + k;
                         Arrays.sort(result);
-                        PairOfPoints l = new PairOfPoints(result[0], result[result.length-1]);
+                        PairOfPoints l = new PairOfPoints(result[0],
+                                result[result.length - 1]);
                         if (!segmentSet.contains(l)) {
                             segmentSet.add(l);
                         }
                     }
-                    j++;
-                 }
+                    j += 3;
+                    // j++;
+                }
             }
             segments = new LineSegment[segmentSet.size()];
             int i = 0;
